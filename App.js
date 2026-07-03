@@ -2,6 +2,8 @@ import './i18n';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import "./global.css"
+
 
 export default function App() {
   const { t } = useTranslation();
@@ -14,7 +16,7 @@ export default function App() {
         <TouchableOpacity style={styles.button} activeOpacity={0.8}>
           <Text style={styles.buttonText}>Run the app!!!!</Text>
         </TouchableOpacity>
-        <Text className="text-lg font-bold">Hola!!!!2322!</Text>
+        <Text className="text-xl font-bold">Hola!!!!232255!</Text>
       </View>
       <StatusBar style="dark" />
     </SafeAreaView>

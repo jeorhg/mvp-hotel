@@ -1,6 +1,6 @@
-const { getDefaultConfig } = require('expo/metro-config');
-
-// Temporarily disable NativeWind's metro transformer to isolate bundling issues.
-// If this fixes the timeout, re-enable NativeWind after further investigation.
-console.log('[metro.config] using default Metro config (nativewind disabled)');
-module.exports = getDefaultConfig(__dirname);
+const { getDefaultConfig } = require("expo/metro-config");
+const { withNativeWind } = require('nativewind/metro');
+ 
+const config = getDefaultConfig(__dirname)
+ 
+module.exports = withNativeWind(config, { input: './global.css' })
