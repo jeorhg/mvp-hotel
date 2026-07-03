@@ -1,0 +1,48 @@
+# Node
+node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+
+# Expo
+.expo/
+.expo-shared/
+.web/
+
+# Metro
+.expo/metro-cache/
+.expo/shims/
+.expo/state.json
+
+# Build output
+dist/
+build/
+*.expo.*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.*
+
+# Misc
+*.log
+*.lock
+
+# React Native
+android/
+ios/
+
+# Generated files
+*.swp
+*.swo
