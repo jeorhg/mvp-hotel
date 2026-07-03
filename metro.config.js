@@ -1,5 +1,6 @@
 const { getDefaultConfig } = require('expo/metro-config');
-const { withNativeWind } = require('nativewind/metro');
 
-console.log('[metro.config] using withNativeWind (forceWriteFileSystem=true)');
-module.exports = withNativeWind(getDefaultConfig(__dirname), { forceWriteFileSystem: true });
+// Temporarily disable NativeWind's metro transformer to isolate bundling issues.
+// If this fixes the timeout, re-enable NativeWind after further investigation.
+console.log('[metro.config] using default Metro config (nativewind disabled)');
+module.exports = getDefaultConfig(__dirname);

@@ -1,27 +1,60 @@
 import './i18n';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, View, Text, TouchableOpacity } from 'react-native';
-import { styled } from 'nativewind';
+import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-
-const StyledSafeAreaView = styled(SafeAreaView);
-const StyledView = styled(View);
-const StyledText = styled(Text);
-const StyledButton = styled(TouchableOpacity);
 
 export default function App() {
   const { t } = useTranslation();
 
   return (
-    <StyledSafeAreaView className="flex-1 bg-slate-50">
-      <StyledView className="flex-1 items-center justify-center px-6">
-        <StyledText className="text-3xl font-bold text-slate-900 mb-4">{t('welcome')}</StyledText>
-        <StyledText className="text-base text-slate-600 text-center mb-8">{t('instruction')}</StyledText>
-        <StyledButton className="bg-slate-900 px-6 py-3 rounded-full shadow-lg">
-          <StyledText className="text-white font-semibold">Expo + Tailwind</StyledText>
-        </StyledButton>
-      </StyledView>
+    <SafeAreaView style={styles.screen}>
+      <View style={styles.container}>
+        <Text style={styles.title}>{t('welcome')}</Text>
+        <Text style={styles.subtitle}>{t('instruction')}</Text>
+        <TouchableOpacity style={styles.button} activeOpacity={0.8}>
+          <Text style={styles.buttonText}>Run the app!!!!</Text>
+        </TouchableOpacity>
+        <Text className="text-lg font-bold">Hola!!!!2322!</Text>
+      </View>
       <StatusBar style="dark" />
-    </StyledSafeAreaView>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#475569',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 24,
+  },
+  button: {
+    backgroundColor: '#1E293B',
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 999,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+});
