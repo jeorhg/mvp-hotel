@@ -16,7 +16,7 @@ export default function App() {
         <TouchableOpacity style={styles.button} activeOpacity={0.8}>
           <Text style={styles.buttonText}>Run the app!!!!</Text>
         </TouchableOpacity>
-        <Text className="text-xl font-bold">Hola!!!!232255!</Text>
+        <Text className="text-xl font-bold">Hola!!!!23225588!</Text>
       </View>
       <StatusBar style="dark" />
     </SafeAreaView>
