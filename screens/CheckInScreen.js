@@ -1,87 +1,65 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
-import { styled } from 'nativewind';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { collection, addDoc, serverTimestamp, doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const StyledView = styled(View);
-const StyledText = styled(Text);
-const StyledInput = styled(TextInput);
-const StyledButton = styled(TouchableOpacity);
-
-export default function CheckInScreen() {
+export default function CheckInScreen({ navigation }) {
   const [room, setRoom] = useState('');
   const [lastName, setLastName] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleCheckIn = async () => {
     if (!room || !lastName) {
-      Alert.alert('Datos incompletos', 'Ingresa tu número de habitación y apellido');
+      Alert.alert('Falta info', 'Habitación y apellido');
       return;
     }
-
-    const checkIn = {
-      room,
-      lastName,
-      status: 'llegó',
-      timestamp: serverTimestamp(),
-    };
-
+    setLoading(true);
     try {
-      await addDoc(collection(db, 'checkins'), checkIn);
-      Alert.alert(
-        '¡Bienvenido a Grand Velas!',
-        `Habitación ${room}, hemos notificado a recepción tu llegada. Tu concierge asignado te contactará en 5 min.`
-      );
-      setRoom('');
-      setLastName('');
-    } catch (error) {
-      console.error('Error al registrar el check-in:', error);
-      Alert.alert('Error', 'No se pudo enviar la información. Intenta de nuevo.');
+      // 1. Guardar checkin en Firebase
+      await addDoc(collection(db, 'checkins'), {
+        room: String(room).trim(),
+        lastName: lastName.trim(),
+        status: 'llegó',
+        hotelId: 'grand-velas',
+        timestamp: serverTimestamp(),
+      });
+
+      // 2. Marcar habitación como ocupada
+      await setDoc(doc(db, 'rooms', String(room).trim()), {
+        number: String(room).trim(),
+        status: 'ocupada',
+        currentGuest: lastName.trim(),
+        hotelId: 'grand-velas',
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+
+      // 3. FIX SEGURIDAD: Guardar sesión en el celular
+      await AsyncStorage.setItem('guestRoom', String(room).trim());
+      await AsyncStorage.setItem('guestName', lastName.trim());
+      await AsyncStorage.setItem('checkInActive', 'true');
+
+      Alert.alert('¡Bienvenido!', `Check-in Hab ${room} registrado. Ya puedes pedir room service.`, [
+        { text: 'Ir al inicio', onPress: () => navigation.navigate('Home') }
+      ]);
+    } catch (e) {
+      Alert.alert('Error', e.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <StyledView className="flex-1 bg-white items-center px-6 pt-12">
-      <Image 
-        source={{ uri: 'https://www.velasresorts.com.mx/images/logos/grand-velas-logo.png' }} 
-        className="w-48 h-16 mb-8"
-        resizeMode="contain"
-      />
-      
-      <StyledText className="text-2xl font-bold text-gray-800 mb-2">
-        Check-in Express
-      </StyledText>
-      <StyledText className="text-base text-gray-500 mb-8 text-center">
-        Evita filas. Notifica tu llegada y nosotros preparamos todo.
-      </StyledText>
-
-      <StyledInput
-        className="w-full h-14 bg-gray-100 rounded-xl px-4 mb-4 text-base"
-        placeholder="Número de habitación"
-        keyboardType="numeric"
-        value={room}
-        onChangeText={setRoom}
-      />
-      
-      <StyledInput
-        className="w-full h-14 bg-gray-100 rounded-xl px-4 mb-6 text-base"
-        placeholder="Apellido de la reservación"
-        value={lastName}
-        onChangeText={setLastName}
-      />
-
-      <StyledButton 
-        className="w-full h-14 bg-[#003B5C] rounded-xl items-center justify-center"
-        onPress={handleCheckIn}
-      >
-        <StyledText className="text-white font-bold text-lg">
-          Notificar mi llegada
-        </StyledText>
-      </StyledButton>
-
-      <StyledText className="text-xs text-gray-400 mt-8 text-center">
-        ¿Problemas? Llama a recepción: 984-877-4400
-      </StyledText>
-    </StyledView>
+    <View className="flex-1 bg-[#F8F6F0] p-6">
+      <Text className="text-2xl font-bold text-[#003B5C] mt-10">Check-in Express</Text>
+      <Text className="text-gray-500 mb-6">Solo huéspedes registrados pueden ordenar</Text>
+      <Text className="text-sm font-bold mb-2">Habitación</Text>
+      <TextInput value={room} onChangeText={setRoom} placeholder="Ej. 101" keyboardType="numeric" className="bg-white rounded-xl px-4 h-14 mb-4 border border-gray-200" />
+      <Text className="text-sm font-bold mb-2">Apellido de reserva</Text>
+      <TextInput value={lastName} onChangeText={setLastName} placeholder="Cortés" className="bg-white rounded-xl px-4 h-14 mb-8 border border-gray-200" />
+      <TouchableOpacity onPress={handleCheckIn} disabled={loading} className="bg-[#003B5C] h-14 rounded-xl items-center justify-center">
+        {loading ? <ActivityIndicator color="white" /> : <Text className="text-white font-bold">Confirmar Check-in</Text>}
+      </TouchableOpacity>
+    </View>
   );
 }

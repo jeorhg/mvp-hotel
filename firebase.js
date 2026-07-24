@@ -1,23 +1,21 @@
-/*
-  Firebase client setup for Expo / React Native / Web.
-  Replace the values below with your Firebase web config.
-*/
-
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { initializeAuth, getReactNativePersistence } from "firebase/auth";
+import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 
 const firebaseConfig = {
-  apiKey: '<YOUR_API_KEY>',
-  authDomain: '<YOUR_AUTH_DOMAIN>',
-  projectId: '<YOUR_PROJECT_ID>',
-  storageBucket: '<YOUR_STORAGE_BUCKET>',
-  messagingSenderId: '<YOUR_MESSAGING_SENDER_ID>',
-  appId: '<YOUR_APP_ID>',
+  apiKey: "TU_API_KEY",
+  authDomain: "mvp-hotel-feda3.firebaseapp.com",
+  projectId: "mvp-hotel-feda3",
+  storageBucket: "mvp-hotel-feda3.appspot.com",
+  messagingSenderId: "TU_ID",
+  appId: "TU_APP_ID"
 };
 
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const app = initializeApp(firebaseConfig);
 
-export const auth = getAuth(app);
+export const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+});
+
 export const db = getFirestore(app);
-export default app;
